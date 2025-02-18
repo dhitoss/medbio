@@ -11,11 +11,31 @@ export default async function Dashboard() {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    redirect("/login");
+    redirect("/");
   }
 
-  // Buscar o perfil do usuário com seus dados
-  const profile = await prisma.profile.findUnique({
+  // Primeiro, verificar se o usuário existe
+  const user = await prisma.user.findUnique({
+    where: {
+      id: session.user.id
+    }
+  });
+
+  if (!user) {
+    console.log('User not found, creating...');
+    // Se o usuário não existir, criar primeiro
+    await prisma.user.create({
+      data: {
+        id: session.user.id,
+        email: session.user.email,
+        name: session.user.name,
+        password: '' // Você pode definir uma senha padrão ou deixar vazio
+      }
+    });
+  }
+
+  // Agora buscar ou criar o perfil
+  let profile = await prisma.profile.findUnique({
     where: {
       userId: session.user.id
     },
@@ -28,14 +48,19 @@ export default async function Dashboard() {
     }
   });
 
-  console.log('Profile data:', profile); // Adicione este log para debug
+  console.log('Profile data:', profile);
 
-  // Se não existir perfil, criar um
   if (!profile) {
-    await prisma.profile.create({
+    console.log('Profile not found, creating...');
+    profile = await prisma.profile.create({
       data: {
         userId: session.user.id,
         username: session.user.name.toLowerCase().replace(/\s+/g, ''),
+        theme: 'light',
+        viewMode: 'text'
+      },
+      include: {
+        links: true
       }
     });
   }
@@ -48,7 +73,6 @@ export default async function Dashboard() {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Coluna da Esquerda - Formulários */}
         <div className="space-y-8">
           <div className="bg-white p-6 rounded-lg shadow">
             <h2 className="text-xl font-semibold mb-6">Editar Perfil</h2>
@@ -60,7 +84,6 @@ export default async function Dashboard() {
           </div>
         </div>
 
-        {/* Coluna da Direita - Preview */}
         <div className="sticky top-8">
           <div className="bg-gray-50 p-8 rounded-lg">
             <h2 className="text-xl font-semibold mb-6 text-center">Preview</h2>
