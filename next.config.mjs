@@ -7,9 +7,17 @@ const nextConfig = {
   experimental: {
     outputFileTracingRoot: join(process.cwd()),
   },
-  // Adicionar pasta uploads para ser copiada durante o build
-  outputFileTracing: true,
-  outputStandalone: true,
+  // Configuração para servir arquivos estáticos
+  distDir: '.next',
+  // Configuração específica para a pasta uploads
+  async rewrites() {
+    return [
+      {
+        source: '/uploads/:path*',
+        destination: '/public/uploads/:path*',
+      },
+    ];
+  },
   // Log para verificar a configuração
   async headers() {
     console.log('Next.js config: Verificando pasta public');
