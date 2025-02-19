@@ -2,6 +2,15 @@ import { getToken } from "next-auth/jwt"
 import { NextResponse } from "next/server"
 
 export async function middleware(request) {
+  // Log para requisições de arquivos em /uploads
+  if (request.nextUrl.pathname.startsWith('/uploads')) {
+    console.log('Requisição de arquivo:', {
+      url: request.nextUrl.pathname,
+      method: request.method,
+      headers: Object.fromEntries(request.headers)
+    });
+  }
+
   const token = await getToken({ req: request })
   const isAuthPage = request.nextUrl.pathname === "/" || request.nextUrl.pathname === "/eixo-criar-conta"
 

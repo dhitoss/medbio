@@ -1,4 +1,4 @@
-import { writeFile, mkdir } from 'fs/promises';
+import { writeFile, mkdir, access, readdir } from 'fs/promises';
 import { join } from 'path';
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
@@ -7,6 +7,8 @@ import { authOptions } from "../auth/[...nextauth]/route";
 export async function POST(request) {
   try {
     console.log('1. Iniciando upload...');
+    console.log('1.1. Diretório atual:', process.cwd());
+    console.log('1.2. Conteúdo do diretório atual:', await readdir(process.cwd()));
     
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -41,12 +43,21 @@ export async function POST(request) {
     const uploadDir = join(process.cwd(), 'public/uploads');
     console.log('6. Diretório de upload:', uploadDir);
 
+    // Verificar se o diretório public existe
+    try {
+      await access(join(process.cwd(), 'public'));
+      console.log('6.0. Diretório public existe');
+    } catch (err) {
+      console.error('6.0. Erro: Diretório public não existe');
+    }
+
     // Garantir que o diretório existe
     try {
       await mkdir(uploadDir, { recursive: true });
       console.log('6.1. Diretório de upload criado/verificado');
+      console.log('6.2. Conteúdo do diretório uploads:', await readdir(uploadDir));
     } catch (err) {
-      console.error('6.2. Erro ao criar diretório:', err);
+      console.error('6.3. Erro ao criar diretório:', err);
     }
 
     const filePath = join(uploadDir, uniqueFilename);
@@ -54,6 +65,14 @@ export async function POST(request) {
     
     await writeFile(filePath, buffer);
     console.log('8. Arquivo salvo com sucesso');
+
+    // Verificar se o arquivo foi realmente salvo
+    try {
+      await access(filePath);
+      console.log('8.1. Arquivo existe no caminho especificado');
+    } catch (err) {
+      console.error('8.2. Erro: Arquivo não encontrado após salvar');
+    }
 
     // Retornar URL relativa
     const imageUrl = `/uploads/${uniqueFilename}`;
