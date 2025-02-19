@@ -1,4 +1,4 @@
-import { writeFile } from 'fs/promises';
+import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
@@ -39,9 +39,17 @@ export async function POST(request) {
     
     // Salvar na pasta public/uploads
     const uploadDir = join(process.cwd(), 'public', 'uploads');
-    const filePath = join(uploadDir, uniqueFilename);
-    
     console.log('6. Diretório de upload:', uploadDir);
+
+    // Garantir que o diretório existe
+    try {
+      await mkdir(uploadDir, { recursive: true });
+      console.log('6.1. Diretório de upload criado/verificado');
+    } catch (err) {
+      console.error('6.2. Erro ao criar diretório:', err);
+    }
+
+    const filePath = join(uploadDir, uniqueFilename);
     console.log('7. Caminho completo do arquivo:', filePath);
     
     await writeFile(filePath, buffer);
