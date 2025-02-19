@@ -75,7 +75,7 @@ export async function POST(request) {
     }
 
     // Retornar URL relativa
-    const imageUrl = `/uploads/${uniqueFilename}`;
+    const imageUrl = `/api/files/${uniqueFilename}`;
     console.log('9. URL da imagem gerada:', imageUrl);
 
     return new NextResponse(
