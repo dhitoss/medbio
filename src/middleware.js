@@ -2,6 +2,8 @@ import { getToken } from "next-auth/jwt"
 import { NextResponse } from "next/server"
 
 export async function middleware(request) {
+  console.log('Middleware - URL:', request.nextUrl.pathname);
+
   // Log para requisições de arquivos em /uploads
   if (request.nextUrl.pathname.startsWith('/uploads')) {
     console.log('Requisição de arquivo:', {
@@ -9,6 +11,7 @@ export async function middleware(request) {
       method: request.method,
       headers: Object.fromEntries(request.headers)
     });
+    return NextResponse.next();
   }
 
   const token = await getToken({ req: request })
@@ -29,5 +32,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/', '/eixo-criar-conta', '/dashboard/:path*']
+  matcher: ['/', '/eixo-criar-conta', '/dashboard/:path*', '/uploads/:path*']
 } 
