@@ -37,8 +37,8 @@ export async function POST(request) {
     const uniqueFilename = `${Date.now()}-${file.name}`;
     console.log('5. Nome único gerado:', uniqueFilename);
     
-    // Salvar na pasta uploads dentro do diretório .next/server/public
-    const uploadDir = join(process.cwd(), '.next', 'server', 'public', 'uploads');
+    // Salvar na pasta public/uploads
+    const uploadDir = join(process.cwd(), 'public/uploads');
     console.log('6. Diretório de upload:', uploadDir);
 
     // Garantir que o diretório existe
