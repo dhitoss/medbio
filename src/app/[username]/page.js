@@ -35,8 +35,8 @@ export default async function PublicProfile({ params }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="w-full max-w-[1200px] mx-auto px-4 lg:px-8">
+    <div className="min-h-screen bg-gray-50 py-8 flex flex-col">
+      <div className="w-full max-w-[1200px] mx-auto px-4 lg:px-8 flex-grow">
         <div className="bg-white rounded-lg shadow-lg p-8">
           {/* Header do Perfil */}
           <div className="text-center mb-8">
@@ -102,6 +102,21 @@ export default async function PublicProfile({ params }) {
           </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="w-full py-6 mt-8 text-center text-gray-600">
+        <p className="text-sm">
+          MDBio - Feito com <span className="text-red-500">❤️</span> por{' '}
+          <a 
+            href="https://eixodigital.com.br" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="font-medium hover:text-gray-900 transition-colors"
+          >
+            Eixo Digital
+          </a>
+        </p>
+      </footer>
     </div>
   );
 } 

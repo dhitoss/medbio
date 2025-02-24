@@ -23,39 +23,60 @@ export default async function Dashboard() {
 
   if (!user) {
     console.log('User not found, creating...');
-    // Se o usuário não existir, criar primeiro
     await prisma.user.create({
       data: {
         id: session.user.id,
         email: session.user.email,
         name: session.user.name,
-        password: '' // Você pode definir uma senha padrão ou deixar vazio
+        password: '' 
       }
     });
   }
 
-  // Agora buscar ou criar o perfil
+  // Buscar o perfil do usuário
   let profile = await prisma.profile.findUnique({
     where: {
       userId: session.user.id
     },
     include: {
-      links: {
-        orderBy: {
-          order: 'asc'
-        }
-      }
+      links: true
     }
   });
 
-  console.log('Profile data:', profile);
-
+  // Se não existir perfil, criar um com username único
   if (!profile) {
     console.log('Profile not found, creating...');
+    
+    // Função para gerar username único
+    const generateUniqueUsername = async (baseName) => {
+      let username = baseName.toLowerCase().replace(/\s+/g, '');
+      let counter = 1;
+      let isUnique = false;
+      let finalUsername = username;
+
+      while (!isUnique) {
+        const exists = await prisma.profile.findUnique({
+          where: { username: finalUsername }
+        });
+
+        if (!exists) {
+          isUnique = true;
+        } else {
+          finalUsername = `${username}${counter}`;
+          counter++;
+        }
+      }
+
+      return finalUsername;
+    };
+
+    const uniqueUsername = await generateUniqueUsername(session.user.name);
+
     profile = await prisma.profile.create({
       data: {
         userId: session.user.id,
-        username: session.user.name.toLowerCase().replace(/\s+/g, ''),
+        username: uniqueUsername,
+        displayName: session.user.name, // Usar o nome do usuário como displayName inicial
         theme: 'light',
         viewMode: 'text'
       },
@@ -64,6 +85,8 @@ export default async function Dashboard() {
       }
     });
   }
+
+  console.log('Profile data:', profile);
 
   return (
     <div className="container mx-auto p-8">
