@@ -21,6 +21,7 @@ export function ProfileForm({ initialData, userId }) {
   const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     username: initialData?.username || '',
+    displayName: initialData?.displayName || '',
     bio: initialData?.bio || '',
     avatar: initialData?.avatar || '',
     viewMode: initialData?.viewMode || 'text'
@@ -156,6 +157,19 @@ export function ProfileForm({ initialData, userId }) {
             className="hidden"
           />
         </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium mb-2">
+          Meu Nome
+        </label>
+        <input
+          type="text"
+          value={formData.displayName}
+          onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
+          className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Seu nome de exibição"
+        />
       </div>
 
       <div>

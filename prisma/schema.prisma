@@ -22,15 +22,16 @@ model User {
 }
 
 model Profile {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  username  String   @unique
-  bio       String?
-  avatar    String?
-  theme     String   @default("light")
-  viewMode  String   @default("text")
-  links     Link[]
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  username    String   @unique
+  displayName String?
+  bio         String?
+  avatar      String?
+  theme       String   @default("light")
+  viewMode    String   @default("text")
+  links       Link[]
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Link {

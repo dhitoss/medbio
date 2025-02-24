@@ -15,7 +15,7 @@ export async function PUT(request) {
     }
 
     const data = await request.json();
-    const { userId, username, bio, avatar, viewMode } = data;
+    const { userId, username, displayName, bio, avatar, viewMode } = data;
 
     // Validar username
     if (!username) {
@@ -60,6 +60,7 @@ export async function PUT(request) {
       },
       data: {
         username,
+        displayName,
         bio,
         avatar,
         viewMode

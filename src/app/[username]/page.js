@@ -43,7 +43,7 @@ export default async function PublicProfile({ params }) {
             {profile.avatar ? (
               <img
                 src={profile.avatar}
-                alt={profile.username}
+                alt={profile.displayName || profile.username}
                 className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
               />
             ) : (
@@ -51,9 +51,12 @@ export default async function PublicProfile({ params }) {
                 <span className="text-gray-500">Sem foto</span>
               </div>
             )}
-            <h1 className="text-2xl font-bold">@{profile.username}</h1>
+            {profile.displayName && (
+              <h1 className="text-2xl font-bold mb-1">{profile.displayName}</h1>
+            )}
+            <p className="text-gray-600">@{profile.username}</p>
             {profile.bio && (
-              <p className="text-gray-600 mt-2">{profile.bio}</p>
+              <p className="text-gray-600 mt-4">{profile.bio}</p>
             )}
           </div>
 
