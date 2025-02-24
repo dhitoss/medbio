@@ -10,6 +10,7 @@ export function LinksManager({ initialLinks = [], profileId }) {
   const [newLink, setNewLink] = useState({ title: '', url: '', image: '' })
   const fileInputRef = useRef(null)
   const [uploading, setUploading] = useState(false)
+  const [editingLink, setEditingLink] = useState(null)
 
   const handleImageUpload = async (e) => {
     const file = e.target.files?.[0]
@@ -39,34 +40,79 @@ export function LinksManager({ initialLinks = [], profileId }) {
     }
   }
 
-  const handleAddLink = async (e) => {
+  const handleSaveLink = async (e) => {
     e.preventDefault()
-    if (!newLink.title || !newLink.url) return
+    
+    if (editingLink) {
+      // Atualizar link existente
+      try {
+        setIsLoading(true)
+        const response = await fetch(`/api/links/${editingLink.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: newLink.title,
+            url: newLink.url,
+            image: newLink.image,
+          }),
+        })
 
-    try {
-      setIsLoading(true)
-      const response = await fetch('/api/links', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...newLink,
-          profileId,
-          order: links.length
-        }),
-      })
+        if (!response.ok) throw new Error('Erro ao atualizar link')
 
-      if (!response.ok) throw new Error('Erro ao adicionar link')
+        const updatedLink = await response.json()
+        setLinks(links.map(link => 
+          link.id === editingLink.id ? updatedLink : link
+        ))
+        setEditingLink(null)
+        setNewLink({ title: '', url: '', image: '' })
+        router.refresh()
+      } catch (error) {
+        console.error('Erro:', error)
+        alert('Erro ao atualizar link')
+      } finally {
+        setIsLoading(false)
+      }
+    } else {
+      // Adicionar novo link
+      try {
+        setIsLoading(true)
+        const response = await fetch('/api/links', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...newLink,
+            profileId,
+            order: links.length
+          }),
+        })
 
-      const addedLink = await response.json()
-      setLinks([...links, addedLink])
-      setNewLink({ title: '', url: '', image: '' })
-      router.refresh()
-    } catch (error) {
-      console.error('Erro:', error)
-      alert('Erro ao adicionar link')
-    } finally {
-      setIsLoading(false)
+        if (!response.ok) throw new Error('Erro ao adicionar link')
+
+        const addedLink = await response.json()
+        setLinks([...links, addedLink])
+        setNewLink({ title: '', url: '', image: '' })
+        router.refresh()
+      } catch (error) {
+        console.error('Erro:', error)
+        alert('Erro ao adicionar link')
+      } finally {
+        setIsLoading(false)
+      }
     }
+  }
+
+  const handleEditLink = (link) => {
+    setEditingLink(link)
+    setNewLink({
+      title: link.title,
+      url: link.url,
+      image: link.image || ''
+    })
+  }
+
+  const handleCancelEdit = () => {
+    setEditingLink(null)
+    setNewLink({ title: '', url: '', image: '' })
   }
 
   const handleDeleteLink = async (id) => {
@@ -112,6 +158,12 @@ export function LinksManager({ initialLinks = [], profileId }) {
                 {/* Botões de ação */}
                 <div className="flex justify-end space-x-2 mt-2">
                   <button
+                    onClick={() => handleEditLink(link)}
+                    className="text-blue-500 hover:text-blue-600 text-sm"
+                  >
+                    Editar
+                  </button>
+                  <button
                     onClick={() => handleDeleteLink(link.id)}
                     className="text-red-500 hover:text-red-600 text-sm"
                   >
@@ -124,8 +176,8 @@ export function LinksManager({ initialLinks = [], profileId }) {
         ))}
       </div>
 
-      {/* Formulário para adicionar novo link */}
-      <form onSubmit={handleAddLink} className="space-y-4">
+      {/* Formulário para adicionar/editar link */}
+      <form onSubmit={handleSaveLink} className="space-y-4">
         {/* Preview da imagem */}
         <div>
           {newLink.image ? (
@@ -193,13 +245,25 @@ export function LinksManager({ initialLinks = [], profileId }) {
           />
         </div>
 
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 disabled:opacity-50 transition-colors"
-        >
-          {isLoading ? 'Adicionando...' : 'Adicionar Link'}
-        </button>
+        <div className="flex gap-2">
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="flex-1 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 disabled:opacity-50 transition-colors"
+          >
+            {isLoading ? 'Salvando...' : editingLink ? 'Salvar Alterações' : 'Adicionar Link'}
+          </button>
+
+          {editingLink && (
+            <button
+              type="button"
+              onClick={handleCancelEdit}
+              className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition-colors"
+            >
+              Cancelar
+            </button>
+          )}
+        </div>
       </form>
     </div>
   )
