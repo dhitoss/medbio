@@ -76,7 +76,6 @@ export default async function Dashboard() {
       data: {
         userId: session.user.id,
         username: uniqueUsername,
-        displayName: session.user.name, // Usar o nome do usuário como displayName inicial
         theme: 'light',
         viewMode: 'text'
       },
