@@ -1,4 +1,4 @@
-import { db } from "@/lib/db"
+import { prisma } from "@/lib/prisma"
 import { hash } from "bcryptjs"
 import { NextResponse } from "next/server"
 
@@ -15,7 +15,7 @@ export async function POST(req) {
     }
 
     // Verifica se já existe um usuário com este email
-    const exists = await db.user.findUnique({
+    const exists = await prisma.user.findUnique({
       where: { email }
     })
 
@@ -28,15 +28,15 @@ export async function POST(req) {
 
     const hashedPassword = await hash(password, 10)
 
-    const user = await db.user.create({
+    const user = await prisma.user.create({
       data: {
         email,
         name,
-        password: hashedPassword
+        hashedPassword
       }
     })
 
-    const { password: _, ...userWithoutPassword } = user
+    const { hashedPassword: _, ...userWithoutPassword } = user
     return NextResponse.json(userWithoutPassword)
   } catch (error) {
     console.error("Erro no registro:", error)
