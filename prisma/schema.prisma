@@ -13,7 +13,7 @@ datasource db {
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
-  password  String
+  password  String   // Mudando de hashedPassword para password para manter consistência
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
