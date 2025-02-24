@@ -15,7 +15,7 @@ export async function middleware(request) {
   }
 
   const token = await getToken({ req: request })
-  const isAuthPage = request.nextUrl.pathname === "/" || request.nextUrl.pathname === "/eixo-criar-conta"
+  const isAuthPage = request.nextUrl.pathname === "/login" || request.nextUrl.pathname === "/eixo-criar-conta"
 
   if (isAuthPage) {
     if (token) {
@@ -24,13 +24,13 @@ export async function middleware(request) {
     return NextResponse.next()
   }
 
-  if (!token) {
-    return NextResponse.redirect(new URL("/", request.url))
+  if (!token && request.nextUrl.pathname !== "/") {
+    return NextResponse.redirect(new URL("/login", request.url))
   }
 
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: ['/', '/eixo-criar-conta', '/dashboard/:path*', '/uploads/:path*']
+  matcher: ['/', '/login', '/eixo-criar-conta', '/dashboard/:path*', '/uploads/:path*']
 } 
