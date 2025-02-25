@@ -25,6 +25,7 @@ model Profile {
   id          String   @id @default(cuid())
   userId      String   @unique
   username    String   @unique
+  displayName String?
   bio         String?
   avatar      String?
   theme       String   @default("light")
