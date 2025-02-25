@@ -35,9 +35,9 @@ export default async function PublicProfile({ params }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 flex flex-col">
+    <div className="min-h-screen bg-white md:bg-gray-50 py-8 flex flex-col">
       <div className="w-full max-w-[1200px] mx-auto px-4 lg:px-8 flex-grow">
-        <div className="bg-white rounded-lg shadow-lg p-8">
+        <div className="bg-white rounded-lg shadow-none md:shadow-lg p-8">
           {/* Header do Perfil */}
           <div className="text-center mb-8">
             {profile.avatar ? (
