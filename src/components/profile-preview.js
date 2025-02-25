@@ -43,7 +43,10 @@ export function ProfilePreview({ profile, links }) {
             <span className="text-gray-500">Sem foto</span>
           </div>
         )}
-        <h2 className="text-xl font-bold">@{profile?.username}</h2>
+        {profile.displayName && (
+              <h1 className="text-2xl font-bold mb-1">{profile.displayName}</h1>
+            )}
+         <p className="text-gray-600">@{profile?.username}</p>
         {profile?.bio && (
           <p className="text-gray-600 mt-2">{profile.bio}</p>
         )}
