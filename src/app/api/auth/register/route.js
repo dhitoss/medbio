@@ -26,17 +26,18 @@ export async function POST(req) {
       )
     }
 
+    // Hash da senha antes de salvar
     const hashedPassword = await hash(password, 10)
 
     const user = await prisma.user.create({
       data: {
         email,
         name,
-        password
+        password: hashedPassword // Salvando a senha com hash
       }
     })
 
-    const { hashedPassword: _, ...userWithoutPassword } = user
+    const { password: _, ...userWithoutPassword } = user
     return NextResponse.json(userWithoutPassword)
   } catch (error) {
     console.error("Erro no registro:", error)
