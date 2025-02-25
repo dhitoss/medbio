@@ -108,7 +108,7 @@ export default async function PublicProfile({ params }) {
         <p className="text-sm">
           MDBio - Feito com <span className="text-red-500">❤️</span> por{' '}
           <a 
-            href="https://eixodigital.com.br" 
+            href="https://mdbio.com.br" 
             target="_blank" 
             rel="noopener noreferrer"
             className="font-medium hover:text-gray-900 transition-colors"
