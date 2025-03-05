@@ -74,5 +74,5 @@ export async function deleteFile(key) {
   }
 }
 
-// Exportar o upload apenas se estiver configurado
-export { upload }; 
+// Exportar o upload e o cliente S3
+export { upload, s3 }; 

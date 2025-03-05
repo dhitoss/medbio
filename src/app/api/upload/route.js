@@ -25,25 +25,49 @@ export async function POST(request) {
       return handleLocalUpload(request);
     }
 
-    // Configurar o middleware de upload para o Spaces
-    const uploadMiddleware = upload.single('file');
-    
-    // Processar o upload
+    // Processar o upload para o Spaces
     console.log('3. Processando upload para o Spaces...');
-    const result = await new Promise((resolve, reject) => {
-      uploadMiddleware(request, {}, function(err) {
-        if (err) {
-          console.error('3.1. Erro no middleware de upload:', err);
-          return reject(err);
-        }
-        resolve(this.req.file);
-      });
-    });
     
+    // Clonar a requisição para poder ler o formData
+    const clonedRequest = request.clone();
+    const formData = await clonedRequest.formData();
+    const file = formData.get('file');
+    
+    if (!file) {
+      console.log('Erro: Nenhum arquivo enviado');
+      return new NextResponse(
+        JSON.stringify({ error: "Nenhum arquivo enviado" }),
+        { status: 400 }
+      );
+    }
+    
+    // Criar um buffer do arquivo
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const filename = `${Date.now()}-${uuidv4()}-${file.name}`;
+    const fileType = file.type;
+    
+    // Fazer upload diretamente usando o cliente S3
+    const params = {
+      Bucket: process.env.DO_SPACES_BUCKET,
+      Key: `uploads/${filename}`,
+      Body: buffer,
+      ACL: 'public-read',
+      ContentType: fileType
+    };
+    
+    // Importar o cliente S3 diretamente
+    const { s3 } = await import('@/lib/spaces');
+    
+    if (!s3) {
+      console.log('S3 client não está disponível, usando armazenamento local');
+      return handleLocalUpload(request);
+    }
+    
+    const result = await s3.upload(params).promise();
     console.log('4. Upload concluído com sucesso:', result);
     
     // Retornar a URL pública
-    const imageUrl = getPublicUrl(result.key);
+    const imageUrl = getPublicUrl(result.Key);
     console.log('5. URL da imagem gerada:', imageUrl);
 
     return new NextResponse(
@@ -53,10 +77,18 @@ export async function POST(request) {
   } catch (error) {
     console.error('Erro no upload:', error);
     console.error('Stack trace:', error.stack);
-    return new NextResponse(
-      JSON.stringify({ error: "Erro ao fazer upload da imagem" }),
-      { status: 500 }
-    );
+    
+    // Se houver erro no upload para o Spaces, tentar o upload local
+    try {
+      console.log('Tentando upload local após falha no Spaces');
+      return await handleLocalUpload(request.clone());
+    } catch (localError) {
+      console.error('Erro também no upload local:', localError);
+      return new NextResponse(
+        JSON.stringify({ error: "Erro ao fazer upload da imagem" }),
+        { status: 500 }
+      );
+    }
   }
 }
 

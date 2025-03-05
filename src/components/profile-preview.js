@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from "react";
+import { ImageWithFallback } from "@/components/image-with-fallback";
 
 // Hook personalizado para obter a URL base
 function useBaseUrl() {
@@ -33,7 +34,7 @@ export function ProfilePreview({ profile, links }) {
 
         {/* Avatar */}
         {profile?.avatar ? (
-          <img
+          <ImageWithFallback
             src={profile.avatar}
             alt={profile.username}
             className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
@@ -66,7 +67,7 @@ export function ProfilePreview({ profile, links }) {
             >
               {link.image ? (
                 <div className="aspect-video w-full">
-                  <img
+                  <ImageWithFallback
                     src={link.image}
                     alt={link.title}
                     className="w-full h-full object-contain rounded-lg"

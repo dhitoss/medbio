@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { ImageWithFallback } from "@/components/image-with-fallback";
 
 export default async function PublicProfile({ params }) {
   const { username } = params;
@@ -41,7 +42,7 @@ export default async function PublicProfile({ params }) {
           {/* Header do Perfil */}
           <div className="text-center mb-8">
             {profile.avatar ? (
-              <img
+              <ImageWithFallback
                 src={profile.avatar}
                 alt={profile.displayName || profile.username}
                 className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
@@ -74,7 +75,7 @@ export default async function PublicProfile({ params }) {
                 >
                   {link.image ? (
                     <div className="w-full max-w-[1024px] mx-auto">
-                      <img
+                      <ImageWithFallback
                         src={link.image}
                         alt={link.title}
                         className="w-full h-auto rounded-lg"
