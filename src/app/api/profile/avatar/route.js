@@ -32,11 +32,19 @@ export async function PUT(request) {
     });
 
     // Se houver um avatar antigo e ele estiver no Spaces, excluir
-    if (currentProfile?.avatar && currentProfile.avatar.includes(process.env.DO_SPACES_BUCKET)) {
-      // Extrair a chave do arquivo da URL
-      const key = currentProfile.avatar.split(`${process.env.DO_SPACES_BUCKET}.${process.env.DO_SPACES_ENDPOINT}/`)[1];
-      if (key) {
-        await deleteFile(key);
+    if (currentProfile?.avatar && 
+        process.env.DO_SPACES_BUCKET && 
+        process.env.DO_SPACES_ENDPOINT && 
+        currentProfile.avatar.includes(process.env.DO_SPACES_BUCKET)) {
+      try {
+        // Extrair a chave do arquivo da URL
+        const key = currentProfile.avatar.split(`${process.env.DO_SPACES_BUCKET}.${process.env.DO_SPACES_ENDPOINT}/`)[1];
+        if (key) {
+          await deleteFile(key);
+        }
+      } catch (error) {
+        console.error('Erro ao excluir avatar antigo:', error);
+        // Continuar mesmo se falhar a exclusão do avatar antigo
       }
     }
 
