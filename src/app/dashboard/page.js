@@ -43,7 +43,7 @@ export default async function Dashboard() {
     }
   });
 
-  // Se não existir perfil, criar um com username único
+
   if (!profile) {
     console.log('Profile not found, creating...');
     
