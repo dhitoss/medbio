@@ -14,41 +14,30 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: 'MedBio - Eixo Digital',
-  description: '473 pessoas estão acessando essa página nesse momento O formato de Bio que aumenta seus agendamentos! ⏳ Menos de 5 minutos ✅ Fácil e rápida implementação ✅ Compliance com regras de conselhos Com templates de fácil edição para você ou sua clínica atraírem mais pacientes!',
-  openGraph: {
-    locale: 'pt_BR',
-    type: 'article',
-    title: 'MedBio - Eixo Digital',
-    description: '473 pessoas estão acessando essa página nesse momento O formato de Bio que aumenta seus agendamentos! ⏳ Menos de 5 minutos ✅ Fácil e rápida implementação ✅ Compliance com regras de conselhos Com templates de fácil edição para você ou sua clínica atraírem mais pacientes!',
-    url: 'https://eixo.digital/medbio/',
-    siteName: 'Eixo Digital',
-    images: [
-      {
-        url: 'http://eixo.digital/wp-content/uploads/2025/01/Component-9.svg',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'MedBio - Eixo Digital',
-    description: '473 pessoas estão acessando essa página nesse momento O formato de Bio que aumenta seus agendamentos!',
-  },
-  icons: {
-    icon: [
-      { url: 'https://eixo.digital/wp-content/uploads/2024/07/xms-icon-144x144.png.pagespeed.ic_.PtP333Ud30.webp', sizes: '32x32' },
-      { url: 'https://eixo.digital/wp-content/uploads/2024/07/xms-icon-144x144.png.pagespeed.ic_.PtP333Ud30.webp', sizes: '192x192' },
-    ],
-    apple: [
-      { url: 'https://eixo.digital/wp-content/uploads/2024/07/xms-icon-144x144.png.pagespeed.ic_.PtP333Ud30.webp' },
-    ],
-  },
-  other: {
-    'msapplication-TileImage': 'https://eixo.digital/wp-content/uploads/2024/07/xms-icon-144x144.png.pagespeed.ic_.PtP333Ud30.webp',
-  },
-  viewport: 'width=device-width, initial-scale=1.0, viewport-fit=cover',
+  title: "MedBio",
+  description: "Sistema de Gestão para Clínicas",
 };
 
 export default function RootLayout({ children }) {
-  return children;
+  return (
+    <html lang="pt-BR">
+      <head>
+        <Script id="hotjar" strategy="afterInteractive">
+          {`
+            (function(h,o,t,j,a,r){
+              h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+              h._hjSettings={hjid:5320304,hjsv:6};
+              a=o.getElementsByTagName('head')[0];
+              r=o.createElement('script');r.async=1;
+              r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+              a.appendChild(r);
+            })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+          `}
+        </Script>
+      </head>
+      <body className={`${geistSans.variable} ${geistMono.variable} font-sans`}>
+        <AuthProvider>{children}</AuthProvider>
+      </body>
+    </html>
+  );
 }
