@@ -12,8 +12,6 @@ export default function Home() {
         title="MedBio - O formato de Bio que aumenta seus agendamentos"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         loading="eager"
-        target="_blank"
-        rel="noopener noreferrer"
       />
     </main>
   )
