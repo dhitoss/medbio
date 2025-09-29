@@ -101,7 +101,7 @@ export function RegisterForm() {
       )}
 
       <Button type="submit" className="w-full">
-        Criar Conta
+        Criar uma Conta
       </Button>
     </form>
   )
