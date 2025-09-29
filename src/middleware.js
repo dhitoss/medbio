@@ -1,5 +1,6 @@
 import { getToken } from "next-auth/jwt"
 import { NextResponse } from "next/server"
+import { verifyAdminToken } from "@/lib/admin-auth"
 
 export async function middleware(request) {
   console.log('Middleware - URL:', request.nextUrl.pathname);
@@ -12,6 +13,22 @@ export async function middleware(request) {
       headers: Object.fromEntries(request.headers)
     });
     return NextResponse.next();
+  }
+
+  // Rotas admin
+  if (request.nextUrl.pathname.startsWith('/admin')) {
+    // Permite acesso à página de login admin
+    if (request.nextUrl.pathname === '/admin') {
+      return NextResponse.next()
+    }
+
+    // Para outras rotas admin, verifica autenticação
+    const adminToken = request.cookies.get('admin-token')?.value
+    if (!verifyAdminToken(adminToken)) {
+      return NextResponse.redirect(new URL('/admin', request.url))
+    }
+
+    return NextResponse.next()
   }
 
   const token = await getToken({ req: request })
@@ -32,5 +49,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/', '/login', '/eixo-criar-conta', '/dashboard/:path*', '/uploads/:path*']
+  matcher: ['/', '/login', '/eixo-criar-conta', '/dashboard/:path*', '/uploads/:path*', '/admin/:path*']
 } 
